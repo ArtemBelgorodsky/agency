@@ -1,95 +1,202 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client"
+import { useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from "axios";
+import styles from './page.module.css';
 
 export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
+
+    const [change, setChange] = useState(true)
+
+    useEffect(() => {
+        axios.get('https://json-server-swart-rho.vercel.app/agency').then((response) => {
+            setPeople(response.data);
+        });
+    }, [change]);
+
+    const [people, setPeople] = useState();
+
+    const [newPerson, setNewPerson] = useState({
+        name: '',
+        age: '',
+        position: '',
+        maritalStatus: '',
+        startDate: '',
+        vacationStartDate: '',
+        vacationEndDate: '',
+        benefits: '',
+        salary: ''
+    });
+
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNewPerson(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
+    const handleAddPerson = () => {
+        if (
+            newPerson.name &&
+            newPerson.age &&
+            newPerson.position &&
+            newPerson.maritalStatus &&
+            newPerson.startDate &&
+            newPerson.vacationStartDate &&
+            newPerson.vacationEndDate &&
+            newPerson.benefits &&
+            newPerson.salary
+        ) {
+            axios.post(
+                'https://json-server-swart-rho.vercel.app/agency',
+                {...newPerson}
+            ).then(() => setChange(!change));
+        }
+    };
+    console.log(newPerson)
+    const handleDeletePerson = (id) => {
+        axios.delete(`https://json-server-swart-rho.vercel.app/agency/${id}`).then(() => setChange(!change));
+    };
+
+    const filteredPeople = people?.filter(person =>
+        Object.values(person)
+            .join(' ')
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase())
+    );
+
+    return (
         <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
+            <div className="d-flex header bg-secondary text-light text-center py-3 mb-2 align-items-center">
+                <img src="https://www.afipnpz.ru/bitrix/templates/main/img/elements/logo.png" alt="Bootstrap" width="100" height="100"/>
+                <h1>Кадровое агентство</h1>
+            </div>
+            <div className="container">
+            <input
+                type="text"
+                className="form-control mb-4"
+                placeholder="Поиск по всем параметрам"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
             />
-          </a>
+                <div className={styles.tableScroll}>
+            <table className="table table-hover">
+                <thead className="thead-dark">
+                <tr>
+                    <th>ФИО</th>
+                    <th>Возраст</th>
+                    <th>Должность</th>
+                    <th>Семейное положение</th>
+                    <th>Дата начала работы</th>
+                    <th>Дата начала отпуска</th>
+                    <th>Дата конца отпуска</th>
+                    <th>Льготы</th>
+                    <th>Заработная плата</th>
+                    <th>Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                {filteredPeople?.map(person => (
+                    <tr key={person.id}>
+                        <td>{person.name}</td>
+                        <td>{person.age}</td>
+                        <td>{person.position}</td>
+                        <td>{person.maritalStatus}</td>
+                        <td>{person.startDate}</td>
+                        <td>{person.vacationStartDate}</td>
+                        <td>{person.vacationEndDate}</td>
+                        <td>{person.benefits}</td>
+                        <td>{person.salary}</td>
+                        <td>
+                            <button className="btn btn-danger" onClick={() => handleDeletePerson(person.id)}>Удалить</button>
+                        </td>
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+            </div>
+            <h2>Добавить сотрудника</h2>
+            <input
+                type="text"
+                className="form-control mb-2"
+                placeholder="ФИО"
+                name="name"
+                value={newPerson.name}
+                onChange={handleInputChange}
+            />
+            <input
+                type="number"
+                className="form-control mb-2"
+                placeholder="Возраст"
+                name="age"
+                value={newPerson.age}
+                onChange={handleInputChange}
+            />
+            <input
+                type="text"
+                className="form-control mb-2"
+                placeholder="Должность"
+                name="position"
+                value={newPerson.position}
+                onChange={handleInputChange}
+            />
+                <select name="maritalStatus" size="1" onChange={handleInputChange} className="form-select mb-2">
+                    <option selected value='нет'>Выберете смейное положение</option>
+                    <option value="Женат">Женат</option>
+                    <option value="Замужем">Замужем</option>
+                    <option value="Холост">Холост</option>
+                </select>
+                <label htmlFor="startDate">Введите дату начала работы:</label>
+            <input
+                id = 'startDate'
+                type="date"
+                className="form-control mb-2"
+                placeholder="Дата начала работы"
+                name="startDate"
+                value={newPerson.startDate}
+                onChange={handleInputChange}
+            />
+                <label htmlFor="vacationStartDate">Введите дату начала отпуска:</label>
+            <input
+                id = 'vacationStartDate'
+                type="date"
+                className="form-control mb-2"
+                placeholder="Дата начала отпуска"
+                name="vacationStartDate"
+                value={newPerson.vacationStartDate}
+                onChange={handleInputChange}
+            />
+                <label htmlFor="vacationEndDate">Введите дату конца отпуска:</label>
+            <input
+                id = 'vacationEndDate'
+                type="date"
+                className="form-control mb-2"
+                placeholder="Дата конца отпуска"
+                name="vacationEndDate"
+                value={newPerson.vacationEndDate}
+                onChange={handleInputChange}
+            />
+            <input
+                type="text"
+                className="form-control mb-2"
+                placeholder="Льготы"
+                name="benefits"
+                value={newPerson.benefits}
+                onChange={handleInputChange}
+            />
+            <input
+                type="number"
+                className="form-control mb-2"
+                placeholder="Заработная плата"
+                name="salary"
+                value={newPerson.salary}
+                onChange={handleInputChange}
+            />
+            <button className="btn btn-warning" onClick={handleAddPerson}>Добавить</button>
+            </div>
         </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+    );
 }
