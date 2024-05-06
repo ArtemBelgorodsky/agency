@@ -17,18 +17,23 @@ export default function Home() {
     const [people, setPeople] = useState();
 
     const [newPerson, setNewPerson] = useState({
-        name: '',
-        age: '',
         position: '',
-        maritalStatus: '',
-        startDate: '',
-        vacationStartDate: '',
-        vacationEndDate: '',
+        education: '',
+        experience: '',
+        schedule: '',
         benefits: '',
-        salary: ''
+        salary: '',
+        note: ''
     });
 
     const [searchTerm, setSearchTerm] = useState('');
+    const [searchTermPosition, setSearchTermPosition] = useState('');
+    const [searchTermEducation, setSearchTermEducation] = useState('');
+    const [searchTermExperience, setSearchTermExperience] = useState('');
+    const [searchTermSchedule, setSearchTermSchedule] = useState('');
+    const [searchTermBenefits, setSearchTermBenefits] = useState('');
+    const [searchTermSalary, setSearchTermSalary] = useState('');
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -40,15 +45,13 @@ export default function Home() {
 
     const handleAddPerson = () => {
         if (
-            newPerson.name &&
-            newPerson.age &&
             newPerson.position &&
-            newPerson.maritalStatus &&
-            newPerson.startDate &&
-            newPerson.vacationStartDate &&
-            newPerson.vacationEndDate &&
+            newPerson.education &&
+            newPerson.experience &&
+            newPerson.schedule &&
             newPerson.benefits &&
-            newPerson.salary
+            newPerson.salary &&
+            newPerson.note
         ) {
             axios.post(
                 'https://json-server-swart-rho.vercel.app/agency',
@@ -65,7 +68,9 @@ export default function Home() {
         Object.values(person)
             .join(' ')
             .toLowerCase()
-            .includes(searchTerm.toLowerCase())
+            .includes(searchTerm.toLowerCase() || searchTermPosition.toLowerCase() || searchTermEducation.toLowerCase() ||
+                searchTermExperience.toLowerCase() || searchTermSchedule.toLowerCase() || searchTermBenefits.toLowerCase() ||
+                searchTermSalary.toLowerCase())
     );
 
     return (
@@ -75,127 +80,91 @@ export default function Home() {
                 <h1>Кадровое агентство</h1>
             </div>
             <div className="container">
-            <input
-                type="text"
-                className="form-control mb-4"
-                placeholder="Поиск по всем параметрам"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-            />
+                <div className="text-center fs-1 fw-bold">Список требуемых вакансий на предприятие</div>
                 <div className={styles.tableScroll}>
-            <table className="table table-hover">
-                <thead className="thead-dark">
+            <table className="table table-hover m-3">
+                <thead className="thead-dark text-center">
                 <tr>
-                    <th>ФИО</th>
-                    <th>Возраст</th>
                     <th>Должность</th>
-                    <th>Семейное положение</th>
-                    <th>Дата начала работы</th>
-                    <th>Дата начала отпуска</th>
-                    <th>Дата конца отпуска</th>
+                    <th>Требуемое образование</th>
+                    <th>Опыт работы</th>
+                    <th>График работы</th>
                     <th>Льготы</th>
                     <th>Заработная плата</th>
-                    <th>Действия</th>
+                    <th>Примечание</th>
                 </tr>
                 </thead>
                 <tbody>
                 {filteredPeople?.map(person => (
                     <tr key={person.id}>
-                        <td>{person.name}</td>
-                        <td>{person.age}</td>
                         <td>{person.position}</td>
-                        <td>{person.maritalStatus}</td>
-                        <td>{person.startDate}</td>
-                        <td>{person.vacationStartDate}</td>
-                        <td>{person.vacationEndDate}</td>
+                        <td>{person.education}</td>
+                        <td>{person.experience}</td>
+                        <td>{person.schedule}</td>
                         <td>{person.benefits}</td>
                         <td>{person.salary}</td>
-                        <td>
-                            <button className="btn btn-danger" onClick={() => handleDeletePerson(person.id)}>Удалить</button>
-                        </td>
+                        <td>{person.note}</td>
                     </tr>
                 ))}
                 </tbody>
             </table>
             </div>
-            <h2>Добавить сотрудника</h2>
-            <input
-                type="text"
-                className="form-control mb-2"
-                placeholder="ФИО"
-                name="name"
-                value={newPerson.name}
-                onChange={handleInputChange}
-            />
-            <input
-                type="number"
-                className="form-control mb-2"
-                placeholder="Возраст"
-                name="age"
-                value={newPerson.age}
-                onChange={handleInputChange}
-            />
-            <input
-                type="text"
-                className="form-control mb-2"
-                placeholder="Должность"
-                name="position"
-                value={newPerson.position}
-                onChange={handleInputChange}
-            />
-                <select name="maritalStatus" size="1" onChange={handleInputChange} className="form-select mb-2">
-                    <option selected value='нет'>Выберете смейное положение</option>
-                    <option value="Женат">Женат</option>
-                    <option value="Замужем">Замужем</option>
-                    <option value="Холост">Холост</option>
-                </select>
-                <label htmlFor="startDate">Введите дату начала работы:</label>
-            <input
-                id = 'startDate'
-                type="date"
-                className="form-control mb-2"
-                placeholder="Дата начала работы"
-                name="startDate"
-                value={newPerson.startDate}
-                onChange={handleInputChange}
-            />
-                <label htmlFor="vacationStartDate">Введите дату начала отпуска:</label>
-            <input
-                id = 'vacationStartDate'
-                type="date"
-                className="form-control mb-2"
-                placeholder="Дата начала отпуска"
-                name="vacationStartDate"
-                value={newPerson.vacationStartDate}
-                onChange={handleInputChange}
-            />
-                <label htmlFor="vacationEndDate">Введите дату конца отпуска:</label>
-            <input
-                id = 'vacationEndDate'
-                type="date"
-                className="form-control mb-2"
-                placeholder="Дата конца отпуска"
-                name="vacationEndDate"
-                value={newPerson.vacationEndDate}
-                onChange={handleInputChange}
-            />
-            <input
-                type="text"
-                className="form-control mb-2"
-                placeholder="Льготы"
-                name="benefits"
-                value={newPerson.benefits}
-                onChange={handleInputChange}
-            />
-            <input
-                type="number"
-                className="form-control mb-2"
-                placeholder="Заработная плата"
-                name="salary"
-                value={newPerson.salary}
-                onChange={handleInputChange}
-            />
-            <button className="btn btn-warning" onClick={handleAddPerson}>Добавить</button>
+                <div className="text-start fs-3 fw-bold m-1">Поиск нужной вакансии</div>
+                <input
+                    type="text"
+                    className="form-control mb-4"
+                    placeholder="Найдите вакансию по любым параметрам"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <div className="text-start fs-3 fw-bold m-1">Расширенный поиск</div>
+                <div>
+                    <label>Должность:</label>
+                    <input
+                        type="text"
+                        className="form-control mb-2"
+                        placeholder="Должность"
+                        value={searchTermPosition}
+                        onChange={(e) => setSearchTermPosition(e.target.value)}
+                    />
+                    <label>Требуемое образование:</label>
+                    <input
+                        type="text"
+                        className="form-control mb-2"
+                        placeholder="Требуемое образование"
+                        value={searchTermEducation}
+                        onChange={(e) => setSearchTermEducation(e.target.value)}
+                    />
+                    <label>Опыт работы:</label>
+                    <select name="maritalStatus" size="1" onChange={(e) => setSearchTermExperience(e.target.value)} className="form-select mb-2">
+                        <option selected value='Нет'>Нет</option>
+                        <option value="От 1 года">От 1 года</option>
+                        <option value="От 2 лет">От 2 лет</option>
+                        <option value="От 3 лет">От 3 лет</option>
+                        <option value="От 5 лет">От 5 лет</option>
+                    </select>
+                    <label>График работы:</label>
+                    <select name="maritalStatus" size="1" onChange={(e) => setSearchTermSchedule(e.target.value)} className="form-select mb-2">
+                        <option selected value='Полный день'>Полный день</option>
+                        <option value="Сменный">Сменный</option>
+                    </select>
+                    <label>Льготы:</label>
+                    <input
+                        type="text"
+                        className="form-control mb-2"
+                        placeholder="Льготы"
+                        value={searchTermBenefits}
+                        onChange={(e) => setSearchTermBenefits(e.target.value)}
+                    />
+                    <label>Заработная плата:</label>
+                    <select name="maritalStatus" size="1" onChange={(e) => setSearchTermSalary(e.target.value)} className="form-select mb-2">
+                        <option selected value='от 30000'>от 30000</option>
+                        <option value="от 40000">от 40000</option>
+                        <option value="от 50000">от 50000</option>
+                        <option value="от 80000">от 80000</option>
+                    </select>
+                </div>
+
             </div>
         </div>
     );
