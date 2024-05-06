@@ -137,7 +137,8 @@ export default function Home() {
                     />
                     <label>Опыт работы:</label>
                     <select name="maritalStatus" size="1" onChange={(e) => setSearchTermExperience(e.target.value)} className="form-select mb-2">
-                        <option selected value='Нет'>Нет</option>
+                        <option selected value='Не выбрано'>Не выбрано</option>
+                        <option value="Нет">Нет</option>
                         <option value="От 1 года">От 1 года</option>
                         <option value="От 2 лет">От 2 лет</option>
                         <option value="От 3 лет">От 3 лет</option>
@@ -158,7 +159,8 @@ export default function Home() {
                     />
                     <label>Заработная плата:</label>
                     <select name="maritalStatus" size="1" onChange={(e) => setSearchTermSalary(e.target.value)} className="form-select mb-2">
-                        <option selected value='от 30000'>от 30000</option>
+                        <option selected value='Не выбрано'>Не выбрано</option>
+                        <option value='от 30000'>от 30000</option>
                         <option value="от 40000">от 40000</option>
                         <option value="от 50000">от 50000</option>
                         <option value="от 80000">от 80000</option>
