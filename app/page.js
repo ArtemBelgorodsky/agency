@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from "axios";
 import styles from './page.module.css';
+import Link from "next/link";
+
 
 export default function Home() {
 
@@ -59,7 +61,6 @@ export default function Home() {
             ).then(() => setChange(!change));
         }
     };
-    console.log(newPerson)
     const handleDeletePerson = (id) => {
         axios.delete(`https://json-server-swart-rho.vercel.app/agency/${id}`).then(() => setChange(!change));
     };
@@ -76,8 +77,17 @@ export default function Home() {
     return (
         <div>
             <div className="d-flex header bg-secondary text-light text-center py-3 mb-2 align-items-center">
-                <img src="https://www.afipnpz.ru/bitrix/templates/main/img/elements/logo.png" alt="Bootstrap" width="100" height="100"/>
-                <h1>Кадровое агентство</h1>
+
+                    <img src="https://www.afipnpz.ru/bitrix/templates/main/img/elements/logo.png" alt="Bootstrap" width="100" height="100"/>
+                    <h1>Кадровое агентство</h1>
+
+                <div className='d-flex flex-grow-1 justify-content-end align-items-center'>
+                    <Link href='/about'>
+                        <button type="button" className="btn btn-light m-1">О нас/Контакты</button>
+                    </Link>
+                    <Link className={styles.link} href=''>Дмитрий Сухов</Link>
+                </div>
+
             </div>
             <div className="container">
                 <div className="text-center fs-1 fw-bold">Список требуемых вакансий на предприятие</div>
@@ -92,9 +102,10 @@ export default function Home() {
                     <th>Льготы</th>
                     <th>Заработная плата</th>
                     <th>Примечание</th>
+                    <th></th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody className='text-center'>
                 {filteredPeople?.map(person => (
                     <tr key={person.id}>
                         <td>{person.position}</td>
@@ -104,6 +115,7 @@ export default function Home() {
                         <td>{person.benefits}</td>
                         <td>{person.salary}</td>
                         <td>{person.note}</td>
+                        <td><button type="button" className="btn btn-danger m-1">Откликнуться</button></td>
                     </tr>
                 ))}
                 </tbody>
